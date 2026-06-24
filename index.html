@@ -48,6 +48,13 @@
     .stat-card { padding: 1rem; }
     .stat-number { font-size: 2.4rem; font-weight: 700; color: #2c5aa0; line-height: 1; }
     .stat-label { font-size: 0.95rem; color: #555; margin-top: 0.4rem; }
+    .publication-video {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      background: #000;
+    }
   </style>
 </head>
 <body>
@@ -112,6 +119,16 @@
                   <span>Dataset (Coming Soon)</span>
                   </a>
               </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="#video"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-play"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
             </div>
           </div>
         </div>
@@ -132,6 +149,22 @@
         <span class="semcity">SemCityLockeD</span>, a centimeter-accurate benchmark combining standardized
         LoD city models with challenging low-altitude UAV imagery.
       </h2>
+    </div>
+  </div>
+</section>
+
+<!-- Video -->
+<section class="section" id="video">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">SemCityLoc in 2 Minutes</h2>
+        <video class="publication-video" controls preload="metadata"
+               aria-label="SemCityLoc project overview video">
+          <source src="./static/videos/SemCityLoc_in2min.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
     </div>
   </div>
 </section>

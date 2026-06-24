@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="SemCityLoc: Aerial 6DoF Localization Using Semantic 3D City Models. We estimate 6DoF UAV poses by aligning foundation-model semantics and depth with lightweight semantic 3D city models.">
+  <meta name="keywords" content="6DoF Localization, UAV, Aerial Pose Estimation, Semantic 3D City Models, LoD, CityGML, Visual Localization">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SemCityLoc: Aerial 6DoF Localization Using Semantic 3D City Models</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <style>
+    .semcity { font-variant: small-caps; font-weight: 600; }
+    .grad-name {
+      background: linear-gradient(90deg, #ff3b30 0%, #b06ad0 50%, #3d7eff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      font-weight: 800;
+    }
+    .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+    table.results { margin: 0 auto; border-collapse: collapse; font-size: 0.9rem; }
+    table.results th, table.results td { padding: 0.4rem 0.7rem; text-align: center; }
+    table.results thead th { border-bottom: 2px solid #363636; }
+    table.results tbody tr.group-sep td { border-top: 1px solid #dbdbdb; }
+    table.results .ours { background: #f3f6fb; }
+    table.results .best { font-weight: 700; }
+    table.results .second { text-decoration: underline; }
+    table.results .method { text-align: left; font-weight: 600; }
+    .stat-card { padding: 1rem; }
+    .stat-number { font-size: 2.4rem; font-weight: 700; color: #2c5aa0; line-height: 1; }
+    .stat-label { font-size: 0.95rem; color: #555; margin-top: 0.4rem; }
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title"><span class="grad-name">SemCityLoc</span>: Aerial 6DoF Localization Using Semantic 3D City Models</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Jingfeng Mao<sup>1</sup>,</span>
+            <span class="author-block">Xuyang Chen<sup>1</sup>,</span>
+            <span class="author-block">Qilin Zhang<sup>1</sup>,</span>
+            <span class="author-block">Oussema Dhaouadi<sup>1</sup>,</span>
+            <span class="author-block">Guangming Wang<sup>2</sup>,</span>
+            <span class="author-block">Brian Sheil<sup>2</sup>,</span>
+            <span class="author-block">Daniel Cremers<sup>1</sup>,</span>
+            <span class="author-block">Yan Xia<sup>3</sup>,</span>
+            <span class="author-block">Olaf Wysocki<sup>2</sup></span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="color:#888;">
+            <span class="author-block"><sup>1</sup>Technical University of Munich,</span>
+            <span class="author-block"><sup>2</sup>University of Cambridge,</span>
+            <span class="author-block"><sup>3</sup>University of Science and Technology of China</span>
+          </div>
+
+          <div class="is-size-5 publication-authors" style="margin-top:0.5rem;">
+            <span class="author-block"><b>ECCV 2026</b></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled
+                   style="pointer-events:none; opacity:0.65;">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper (Coming Soon)</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled
+                   style="pointer-events:none; opacity:0.65;">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code (Coming Soon)</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark" disabled
+                   style="pointer-events:none; opacity:0.65;">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Dataset (Coming Soon)</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/figures/6DoF_v7.png" alt="SemCityLoc teaser"/>
+      <h2 class="subtitle has-text-centered" style="margin-top:1rem;">
+        <span class="semcity">SemCityLoc</span> estimates 6DoF UAV poses by aligning foundation-model semantics
+        and monocular depth with lightweight, semantically structured 3D city models &mdash;
+        <b>without radiometric scene reconstructions</b>. We further introduce
+        <span class="semcity">SemCityLockeD</span>, a centimeter-accurate benchmark combining standardized
+        LoD city models with challenging low-altitude UAV imagery.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<!-- Abstract -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Aerial 6DoF localization typically relies on precise GNSS signals or radiometrically rich 3D
+            reconstructions, limiting scalability and on-board deployment. We propose
+            <span class="semcity">SemCityLoc</span>, a semantic&ndash;geometric alignment system that reframes
+            aerial pose estimation as <b>structured surface registration</b> between foundation-model-derived
+            visual priors and standardized LoD-compliant 3D city models.
+          </p>
+          <p>
+            Instead of matching sparse contours or dense texture, our method aligns semantic surfaces and
+            monocular depth with lightweight semantic 3D building models, increasing pose discriminability in
+            repetitive and occluded urban environments. To enable accurate evaluation, we introduce
+            <span class="semcity">SemCityLockeD</span>, the first real-world benchmark combining
+            centimeter-accurate UAV poses with standardized LoD1&ndash;LoD3 semantic city models and challenging
+            low-altitude imagery.
+          </p>
+          <p>
+            Experiments demonstrate substantial improvements over existing map-based approaches, improving recall
+            by up to <b>36%</b> and reducing mean positional error from <b>9.89&nbsp;m to 2.62&nbsp;m</b> in
+            challenging urban canyons. Our results indicate that semantically structured geometry provides
+            sufficient and scalable constraints for high-precision aerial localization without radiometric scene
+            reconstructions.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Highlight stats -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-3 stat-card">
+        <div class="stat-number">+34%</div>
+        <div class="stat-label">recall gain at 2m&ndash;2&deg;<br>(35.1% &rarr; 69.2%)</div>
+      </div>
+      <div class="column is-3 stat-card">
+        <div class="stat-number">2.62 m</div>
+        <div class="stat-label">mean error in urban canyons<br>(from 9.89&nbsp;m)</div>
+      </div>
+      <div class="column is-3 stat-card">
+        <div class="stat-number">0.88 s</div>
+        <div class="stat-label">per-image runtime<br>(GPU rasterization)</div>
+      </div>
+      <div class="column is-3 stat-card">
+        <div class="stat-number">962</div>
+        <div class="stat-label">cm-accurate UAV images<br>with LoD1&ndash;LoD3 models</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contributions -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Contributions</h2>
+        <div class="content has-text-justified">
+          <ul>
+            <li>
+              <b>Semantic&ndash;geometric aerial localization.</b> We propose <span class="semcity">SemCityLoc</span>,
+              an approach that reformulates aerial localization as structured semantic&ndash;geometric surface
+              alignment between foundation-model predictions and lightweight LoD city models.
+            </li>
+            <li>
+              <b>Real-world benchmark.</b> We present <span class="semcity">SemCityLockeD</span>, a challenging
+              dataset combining centimeter-accurate UAV poses, close-range urban imagery, and standardized
+              LoD1&ndash;LoD3 semantic city models for accurate evaluation of map-based aerial localization.
+            </li>
+            <li>
+              <b>Extensive evaluation.</b> We demonstrate consistent improvements over state-of-the-art map-based
+              localization approaches across our and other benchmarks and challenging urban scenarios.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Method -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width has-text-centered">
+        <h2 class="title is-3">Method Overview</h2>
+        <div class="content has-text-justified">
+          <p>
+            <span class="semcity">SemCityLoc</span> follows a <b>coarse-to-fine semantic&ndash;geometric alignment</b>
+            strategy. Given a query image and an initial pose prior, we first perform a <b>4D semantic cost-volume
+            search</b> to obtain a coarse pose estimate, then refine it via <b>joint semantic and depth alignment</b>
+            using a particle-filter optimization scheme to recover the final 6DoF camera pose.
+          </p>
+        </div>
+        <img src="./static/images/figures/Pipeline2.png" alt="SemCityLoc pipeline"/>
+        <p class="is-size-6 has-text-grey" style="margin-top:0.75rem;">
+          <b>Two-stage pose matching.</b> In the coarse stage, a DINOv3-based semantic segmentation model and batch
+          rendering construct a 4D cost volume for coarse pose estimation. In the fine stage, a particle filter
+          fuses semantic and monocular depth (MoGe-2) cues for refined pose estimation.
+        </p>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="content">
+          <h3 class="title is-4">Coarse Pose Selection</h3>
+          <p>
+            A frozen DINOv3 ViT backbone with a lightweight DPT decoder predicts semantic masks for the query
+            image. Candidate poses are sampled around the prior over <b>(x, y, z, &psi;)</b> &mdash; roll and pitch
+            are fixed from gravity. For each pose we render the LoD semantic mask and score it against the query mask
+            with a per-class <b>IoU cost</b>, building a 4D cost volume whose maximum yields the coarse pose.
+          </p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="content">
+          <h3 class="title is-4">Pose Refinement</h3>
+          <p>
+            We add monocular depth from <b>MoGe-2</b>, aligning estimated and rendered depth via a robust
+            scale&ndash;shift term. The final cost combines semantic and depth terms. A <b>particle filter</b>
+            iteratively perturbs the coarse hypothesis, evaluates the cost, and updates the pose in a weighted
+            manner &mdash; enabling stable, efficient convergence without exhaustive high-dimensional grid search.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths has-text-centered content">
+        <p class="is-italic has-text-grey">
+          Unlike contour-based alignment over sparse edges, semantic surface partitions add region-level structural
+          constraints that increase pose observability &mdash; transforming localization from edge matching into
+          <b>structured surface registration</b>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dataset -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width has-text-centered">
+        <h2 class="title is-3">The SemCityLockeD Benchmark</h2>
+        <div class="content has-text-justified">
+          <p>
+            <span class="semcity">SemCityLockeD</span> is the first real-world benchmark pairing
+            <b>centimeter-accurate UAV poses</b> with standardized LoD semantic 3D city models and challenging
+            low-altitude imagery. It captures a densely built urban environment with closely spaced buildings,
+            narrow urban canyons, and diverse architecture (19th&ndash;21st century).
+          </p>
+          <ul>
+            <li><b>962 images</b> (586 / 188 / 188 train/val/test) at 5,280&times;3,956 px, 1.6&nbsp;cm GSD, nadir + oblique.</li>
+            <li>DJI Matrice 350 RTK + Zenmuse L2, ~75&nbsp;m altitude; poses via RTK-GNSS + IMU + GCPs (~2&nbsp;cm accuracy, EPSG:32632).</li>
+            <li>Standardized <b>LoD1, LoD2 (semantic), and LoD3</b> models from the Bavarian state geoportal, plus textured meshes for synthetic rendering.</li>
+            <li>Automatic geometry-consistent semantic labels by projecting model semantics into image space; privacy-filtered imagery.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="title is-5 has-text-centered">Pose Quality Comparison</h3>
+    <div class="columns is-centered is-multiline">
+      <div class="column is-3 has-text-centered">
+        <img src="./static/images/figures/crossloc.png" alt="Swiss-EPFL"/>
+        <p class="is-size-7">(a) Swiss-EPFL (&gt;75&nbsp;m, sub-urban)</p>
+      </div>
+      <div class="column is-3 has-text-centered">
+        <img src="./static/images/figures/uavd4l.png" alt="UAVD4L"/>
+        <p class="is-size-7">(b) UAVD4L (high altitude)</p>
+      </div>
+      <div class="column is-3 has-text-centered">
+        <img src="./static/images/figures/semcityloc.png" alt="SemCityLockeD nadir"/>
+        <p class="is-size-7">(c) <span class="semcity">SemCityLockeD</span> (nadir)</p>
+      </div>
+      <div class="column is-3 has-text-centered">
+        <img src="./static/images/figures/semcityloc2.png" alt="SemCityLockeD oblique"/>
+        <p class="is-size-7">(d) <span class="semcity">SemCityLockeD</span> (oblique)</p>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths has-text-centered content">
+        <p class="is-size-6 has-text-grey">
+          Georeferenced keypoints projected with ground-truth poses align closely with image structures in (c) and
+          (d), indicating high pose consistency under substantially more challenging close-range urban-canyon
+          geometry than the high-altitude (a) and (b).
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Results -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width has-text-centered">
+        <h2 class="title is-3">Results</h2>
+      </div>
+    </div>
+
+    <!-- Qualitative -->
+    <div class="columns is-centered">
+      <div class="column is-full-width has-text-centered">
+        <h3 class="title is-5">Qualitative Comparison vs. LoD-Loc</h3>
+        <img src="./static/images/figures/results_compare.png" alt="Qualitative comparison"/>
+        <p class="is-size-6 has-text-grey" style="margin-top:0.75rem;">
+          Projecting LoD geometry with the estimated poses reveals noticeable misalignment for LoD-Loc, especially
+          in oblique views and facade-occluded urban canyons. <span class="semcity">SemCityLoc</span> produces
+          geometrically consistent overlays and accurate depth alignment (especially apparent in view&nbsp;3).
+        </p>
+      </div>
+    </div>
+
+    <!-- Main table -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-5 has-text-centered">Camera Pose Evaluation on SemCityLockeD</h3>
+        <div class="table-wrap">
+          <table class="results">
+            <thead>
+              <tr>
+                <th class="method">Method</th>
+                <th>2m&ndash;2&deg;</th>
+                <th>3m&ndash;3&deg;</th>
+                <th>5m&ndash;5&deg;</th>
+                <th>Yaw (&deg;)</th>
+                <th>XYZ (m)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="method">MC-Loc (DINOv2)</td><td>5.32</td><td>8.51</td><td>18.09</td><td>5.90</td><td>10.71</td></tr>
+              <tr><td class="method">MC-Loc (RoMa)</td><td>0</td><td>1.06</td><td>3.19</td><td>6.67</td><td>18.61</td></tr>
+              <tr class="group-sep"><td class="method">LoD-Loc</td><td>35.11</td><td>47.87</td><td>53.19</td><td>1.78</td><td>9.89</td></tr>
+              <tr class="group-sep ours"><td class="method">SemCityLoc <i>(no coarse sel.)</i></td><td>41.49</td><td>56.38</td><td>72.34</td><td>1.11</td><td>5.94</td></tr>
+              <tr class="ours"><td class="method">SemCityLoc <i>(no refine)</i></td><td class="second">56.38</td><td class="second">70.21</td><td class="second">81.91</td><td class="second">1.04</td><td class="second">3.20</td></tr>
+              <tr class="ours"><td class="method">SemCityLoc <i>(full)</i></td><td class="best">69.15</td><td class="best">84.04</td><td class="best">89.36</td><td class="best">0.42</td><td class="best">2.62</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="is-size-7 has-text-grey has-text-centered">
+          Recall in %, yaw in degrees, position in meters. CAD-Loc (e-LoFTR / RoMa) score 0 across thresholds and
+          are omitted. <b>Bold</b> = best, <span class="second">underline</span> = second best. Both coarse selection
+          and semantic&ndash;depth refinement are complementary and jointly critical.
+        </p>
+      </div>
+    </div>
+
+    <!-- Generalization tables -->
+    <div class="columns is-centered">
+      <div class="column">
+        <h3 class="title is-6 has-text-centered">UAVD4L-LoD (out-of-Traj)</h3>
+        <div class="table-wrap">
+          <table class="results">
+            <thead>
+              <tr><th class="method">Method</th><th>2m&ndash;2&deg;</th><th>5m&ndash;5&deg;</th><th>XYZ (m)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="method">LoD-Loc</td><td>88.18</td><td>99.54</td><td>1.38</td></tr>
+              <tr class="group-sep ours"><td class="method">SemCityLoc</td><td class="best">89.64</td><td class="best">99.95</td><td class="best">1.26</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="column">
+        <h3 class="title is-6 has-text-centered">Swiss-EPFL (out-of-Place)</h3>
+        <div class="table-wrap">
+          <table class="results">
+            <thead>
+              <tr><th class="method">Method</th><th>2m&ndash;2&deg;</th><th>5m&ndash;5&deg;</th><th>XYZ (m)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="method">LoD-Loc</td><td>17.41</td><td>48.55</td><td>12.54</td></tr>
+              <tr class="group-sep ours"><td class="method">SemCityLoc</td><td class="best">35.36</td><td class="best">89.18</td><td class="best">3.09</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths has-text-centered content">
+        <p class="is-size-6 has-text-grey">
+          The semantic&ndash;geometric alignment generalizes across heterogeneous environments &mdash; in the
+          challenging out-of-Place setting it nearly doubles recall and cuts mean positional error from
+          12.54&nbsp;m to 3.09&nbsp;m.
+        </p>
+      </div>
+    </div>
+
+    <!-- Convergence + LoD -->
+    <div class="columns is-centered">
+      <div class="column has-text-centered">
+        <h3 class="title is-5">Training Convergence</h3>
+        <img src="./static/images/figures/convergence_comparison.png" alt="Convergence comparison" style="max-width:90%;"/>
+        <p class="is-size-6 has-text-grey" style="margin-top:0.5rem;">
+          <span class="semcity">SemCityLoc</span> converges within a few epochs and stabilizes after ~15 epochs.
+          Fine-tuning a lightweight head on pretrained features with an IoU-based objective yields smoother gradients
+          than reprojection-based losses trained from scratch.
+        </p>
+      </div>
+      <div class="column has-text-centered">
+        <h3 class="title is-5">Robustness Across LoDs</h3>
+        <img src="./static/images/figures/lods.png" alt="LoD levels" style="max-width:90%;"/>
+        <p class="is-size-6 has-text-grey" style="margin-top:0.5rem;">
+          Performance improves from LoD1 to LoD3. Notably, <b>semantic LoD2</b> matches or surpasses LoD3 despite
+          lower geometric resolution &mdash; semantically partitioned surfaces enhance pose observability and
+          partially compensate for missing fine-grained geometry.
+        </p>
+      </div>
+    </div>
+
+    <!-- Extra analyses -->
+    <div class="columns is-centered">
+      <div class="column is-four-fifths content">
+        <h3 class="title is-5 has-text-centered">Further Analyses</h3>
+        <ul>
+          <li><b>Segmentation quality.</b> A lightweight head on a shared DINOv3 backbone reaches 88% / 85% / 78% mIoU on the three benchmarks &mdash; sufficient for stable alignment. Fully zero-shot CLIP+Semantic-SAM (32% mIoU) and Grounded-SAM2 (37% mIoU) degrade recall sharply due to terrestrial-to-aerial domain mismatch.</li>
+          <li><b>Pose-prior noise.</b> Recall degrades smoothly under translational perturbations, staying at 62.8% / 70.2% / 76.6% even with 40&ndash;50&nbsp;m per-axis noise, but drops sharply beyond ~100&nbsp;m &mdash; revealing an operational boundary.</li>
+          <li><b>Runtime.</b> With nvdiffrast GPU rasterization and frustum culling, the full pipeline runs in <b>0.878&nbsp;s/image</b> (0.116&nbsp;s inference + 0.409&nbsp;s coarse search + 0.353&nbsp;s refinement) &mdash; feasible for practical online UAV relocalization.</li>
+          <li><b>Limitations.</b> Relies on availability and accuracy of semantic 3D city models; robust to dynamic objects but may degrade with severely limited geometric observability (e.g., a single visible facade).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BibTeX -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{semcityloc2026,
+  author    = {Mao, Jingfeng and Chen, Xuyang and Zhang, Qilin and Dhaouadi, Oussema
+               and Wang, Guangming and Sheil, Brian and Cremers, Daniel
+               and Xia, Yan and Wysocki, Olaf},
+  title     = {SemCityLoc: Aerial 6DoF Localization Using Semantic 3D City Models},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This website is licensed under a <a rel="license"
+              href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+            Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            The website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
